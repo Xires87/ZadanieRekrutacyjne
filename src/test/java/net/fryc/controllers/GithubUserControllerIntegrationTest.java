@@ -19,7 +19,9 @@ public class GithubUserControllerIntegrationTest {
 
     @Test
     public void givenValidUser_whenExternalApiRespondsSuccessfully_thenStatusIsOkAndReturnedReposHaveNoForks(){
-        ResponseEntity<String> apiResponse = this.userController.listGithubReposForUser("Xires87");
+        String user = "Xires87";
+
+        ResponseEntity<String> apiResponse = this.userController.listGithubReposForUser(user);
 
         Assertions.assertSame(HttpStatus.OK, apiResponse.getStatusCode());
         Assertions.assertNotNull(apiResponse.getBody());
@@ -28,7 +30,7 @@ public class GithubUserControllerIntegrationTest {
         Assertions.assertTrue(apiResponse.getBody().contains("owner_login"));
         Assertions.assertTrue(apiResponse.getBody().contains("branches"));
 
-        ResponseEntity<String> externalApiResponse = this.userController.externalApiService.getGithubRepos("Xires87");
+        ResponseEntity<String> externalApiResponse = this.userController.externalApiService.getGithubRepos(user);
 
         Assertions.assertDoesNotThrow(() -> {
             JsonNode myJsonNode = JsonHelper.MAPPER.readTree(apiResponse.getBody());
