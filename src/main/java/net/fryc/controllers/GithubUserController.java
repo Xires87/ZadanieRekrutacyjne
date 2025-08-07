@@ -14,8 +14,8 @@ public class GithubUserController {
     public ExternalApiService externalApiService;
 
     @GetMapping("/{user}")
-    public String listGithubReposFor(@PathVariable String user){
+    public ResponseEntity<String> listGithubReposFor(@PathVariable String user){
         ResponseEntity<String> response = this.externalApiService.getGithubRepos(user);
-        return response.getBody();
+        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
 }
