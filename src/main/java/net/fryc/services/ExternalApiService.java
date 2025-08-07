@@ -1,15 +1,16 @@
 package net.fryc.services;
 
-import net.fryc.utils.JsonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.Map;
 
 @Service
@@ -39,25 +40,19 @@ public class ExternalApiService {
     }
 
     public ResponseEntity<String> getGithubRepos(String userName){
-        ResponseEntity<String> response = this.getResponseFromApi(
+        return this.getResponseFromApi(
                 GITHUB_API_URL + "/users/" + userName + "/repos",
                 String.class,
                 new HttpEntity<>(GITHUB_API_HEADERS)
         );
+    }
 
-        if(response.getStatusCode() == HttpStatus.NOT_FOUND){
-            try{
-                String newBody = JsonHelper.removeFieldFromJsonString(response.getBody(), "documentation_url");
-
-                return ResponseEntity.status(response.getStatusCode()).body(newBody);
-            }
-            catch (IOException e){
-                String message = "An error occurred while removing field named 'documentation_url' from the following JSON string: " + response.getBody();
-                LOGGER.error(message, e);
-            }
-        }
-
-        return response;
+    public ResponseEntity<String> getRepoBranches(String userName, String repoName){
+        return this.getResponseFromApi(
+                GITHUB_API_URL + "/repos/" + userName + "/" + repoName + "/branches",
+                String.class,
+                new HttpEntity<>(GITHUB_API_HEADERS)
+        );
     }
 
 }
